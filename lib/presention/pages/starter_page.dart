@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_clone/presention/controllers/starter_controller.dart';
+import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 import 'home_page.dart';
 
 class StarterPage extends StatefulWidget {
-  static const String id = 'starter_page';
   const StarterPage({super.key});
 
   @override
@@ -12,24 +13,17 @@ class StarterPage extends StatefulWidget {
 }
 
 class _StarterPageState extends State<StarterPage> {
-  late VideoPlayerController videoPlayerController;
+  final _controller = Get.find<StarterController>();
 
   @override
   void initState() {
     super.initState();
-    videoPlayerController =
-        VideoPlayerController.asset("assets/videos/gemini_video.mp4")
-          ..initialize().then((_) {
-            setState(() {});
-          });
-
-    videoPlayerController.play();
-    videoPlayerController.setLooping(true);
+    _controller.initVideoPlayer();
   }
 
   @override
   void dispose() {
-    videoPlayerController.dispose();
+    _controller.exitVideoPlayer();
     super.dispose();
   }
 
@@ -37,56 +31,59 @@ class _StarterPageState extends State<StarterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 40),
-        child: Column(
-          children: [
-            Container(
-              child: Image(
-                width: 150,
-                image: AssetImage('assets/images/gemini_logo.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            Expanded(
-              child: videoPlayerController.value.isInitialized
-                  ? VideoPlayer(videoPlayerController)
-                  : Container(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: GetBuilder<StarterController>(
+        builder: (_){
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: Column(
               children: [
-                GestureDetector(
-                  onTap: (){
-                    Navigator.pushReplacementNamed(context, HomePage.id);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, width: 2
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Chat with Gemini',
-                          style: TextStyle(color: Colors.grey[400], fontSize: 18),
-                        ),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.grey,
-                        )
-                      ],
-                    ),
+                Container(
+                  child: const Image(
+                    width: 150,
+                    image: AssetImage('assets/images/gemini_logo.png'),
+                    fit: BoxFit.cover,
                   ),
-                )
+                ),
+                Expanded(
+                  child: _controller.videoPlayerController.value.isInitialized
+                      ? VideoPlayer(_controller.videoPlayerController)
+                      : Container(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, HomePage.id);
+                      },
+                      child: Container(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Chat with Gemini ',
+                              style: TextStyle(color: Colors.grey[400], fontSize: 18),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward,
+                              color: Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            )
-          ],
-        ),
-      ),
+            ),
+          );
+        },
+      )
     );
   }
 }

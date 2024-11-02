@@ -18,6 +18,9 @@ dependencies:
   video_player: ^2.8.5
   dartz: ^0.10.1
 
+  # getX
+  get: ^4.6.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
